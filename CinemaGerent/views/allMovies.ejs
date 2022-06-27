@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+</head>
+<body onload="searchFunc(`<%= movieToSearch %>`)">
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logo" onclick="window.location.href = '/login'">
+    <div class="menu">
+        <%= 'Hello ,' + user.firstname + ' ' + user.lastname + "." %>
+            <div id="menuLinks">
+                &nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: #ada8a1" ;>[<a href="/movies">Movies</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <span>[<a href="/subscriptions">Subscriptions</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <% if(user.id==="6293362c2deb85a53e109a2f" ) { %>
+                    <span>[<a href="/users">Admin panel</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <% } %>
+                        <span>[<a href="/logout">Logout</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+    </div>
+    <div class="mainBox" id="contentBox">
+        Options:
+        &#8618;<span style="background-color: #ada8a1" ;><a href="/movies">Display All
+                movies</a></span>&nbsp;&nbsp;&nbsp;&nbsp;&#8618;<span><a href="movies/add/movie">Add
+                movie</a></span>&nbsp;&nbsp;&nbsp;&nbsp;&#8618;<span><u>Find movie</u>:</span>&nbsp;<input type="search" placeholder="Movie name to find..." onsearch="searchFunc(`input`)" id="searchInput">      
+<script>
+function searchFunc(mapper) 
+{
+if (mapper === `input`) //call came from search input
+{
+    let searchKey = document.getElementById("searchInput").value.trim();
+    searchEngine(searchKey);
+} 
+else if (mapper === "") //NO call, empty mapper. no call from bar+no onload search string.
+{}
+else //call came from page loading.
+{
+    searchEngine(mapper);
+}
+}
+
+function searchEngine(searchKey)
+{
+    let boxes = Array.from(document.getElementsByClassName("Box"));
+    boxes.forEach(box=>{
+    if (box.id.toLowerCase().includes(searchKey.toLowerCase()))
+    {box.style.display = `inline-block`;}
+    else 
+    {box.style.display = `none`;}
+})
+}  
+</script>
+        <div class="flexSmallBox">
+            <% if(user.permissions.find(per=>per=="View Movies")) { %>
+            <% data.movies.forEach(mov=>{ %>
+
+                <div class="Box" id="<%= mov.name %>">
+                    <strong>
+                        <%= mov.name %>, <%= mov.premiered.slice(0,4) %>
+                        <% if(user.permissions.find(per=>per=="Update Movies")) { %>    
+                        <input type="button" value="Edit"
+                                    onclick="window.location.href = '/movies/edit/<%= mov._id %>'">
+                        <% } %>
+                        <% if(user.permissions.find(per=>per=="Delete Movies")) { %>  
+                                <input type="button" value="Delete"
+                                    onclick="window.location.href = '/movies/delete/<%= mov._id %>'">
+                        <% } %>
+                                <br>
+                    </strong>
+                    [<span class="smallertxt">
+                        <%= mov.genres %>
+                    </span>]
+
+                    <br>
+
+                    <div>
+                        <img src="<%= mov.image %>" style="vertical-align:top"></img>
+                        <div id="subs" class="smallertxt">
+                            <% let count=0; %>
+                                <% data.subscriptions.forEach(sub=> { %>
+                                    <% if(sub.movieid.toString()==mov._id.toString()) { %>
+                                        <% count++ %>
+                                            <% if(count==1) { %>
+                                                <Strong>
+                                                    Subscriptions watched:<br>
+                                                </Strong>
+                                                <% } %>
+                                                    <% data.members.forEach(member=>{ %>
+                                                        <% if(member._id.toString()==sub.memberid.toString()) { %>
+                                                            <a href="/subscriptions/edit/<%= member._id %>">
+                                                                <%= member.name %>
+                                                            </a>, <%= sub.date.slice(0,10) %><br>
+                                                                <% } %>
+                                                                    <% }) %>
+                                                                        <% } }) %>
+                        </div>
+                    </div>
+                </div>
+
+                <% }) %>
+        </div>
+        <% } else { %>
+
+            <span style="text-align:center;">
+                You're not authorized to view movies.<br>
+            Sorry!
+            </span>
+        <% } %>
+
+    </div>
+
+</body>
+
+</html>

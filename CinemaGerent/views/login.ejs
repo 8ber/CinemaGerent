@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+</head>
+
+<body>
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logoInAuth" onclick="window.location.href = 'login'">
+    
+    <div id="floatLogin" class="mainBox">Ready to roll?<br>
+    <div id="loginBox" >
+        <form action="/login" method="POST">
+            <div id="loginForm">
+                <label for="username">Username:</label></label>
+                <input type="text" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" name="password" required>
+            </div>
+            <input type="submit" value="Login" />
+        </form>
+        <% if(DisplayError) { %>
+            <span id="status">
+                <%= DisplayError %>
+            </span>
+            <% } %>
+        </div>
+            →New user? <a href="/createAccount">create account</a>.
+    </div>
+
+    <!-- <div class="footer">
+        
+    </div> -->
+</body>
+
+</html>

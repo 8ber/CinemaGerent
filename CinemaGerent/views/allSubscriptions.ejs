@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+</head>
+
+<body>
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logo" onclick="window.location.href = '/login'">
+    <div class="menu">
+        <%= 'Hello ,' + user.firstname + ' ' + user.lastname + "." %>
+            <div id="menuLinks">
+                &nbsp;&nbsp;&nbsp;&nbsp;<span>[<a href="/movies">Movies</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="background-color: #ada8a1" ;>[<a
+                        href="/subscriptions">Subscriptions</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <% if(user.id==="6293362c2deb85a53e109a2f" ) { %>
+                    <span>[<a href="/users">Admin panel</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <% } %>
+                        <span>[<a href="/logout">Logout</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+    </div>
+    <div class="mainBox" id="contentBox">
+        Options:
+        &#8618;<span style="background-color: #ada8a1" ;><a href="/subscriptions">Display All
+                members</a></span>&nbsp;&nbsp;&nbsp;&nbsp;&#8618;<span><a href="/subscriptions/addMember">Add
+                member</a></span>
+
+        <div class="flexSmallBox">
+            <% if(user.permissions.find(per=>per=="View Subscriptions")) { %>
+                <% data.members.forEach(mem=>{ %>
+                    <div class="Box">
+                        <strong>
+                            <%= mem.name %>
+                                <br>
+                                <% if(user.permissions.find(per=>per=="Update Subscriptions")) { %>
+                                    <input type="button" value="Edit"
+                                        onclick="window.location.href = '/subscriptions/edit/<%= mem._id %>'">
+                                    <% } %>
+                                        <% if(user.permissions.find(per=>per=="Delete Subscriptions")) { %>
+                                            <input type="button" value="Delete"
+                                                onclick="window.location.href = '/subscriptions/delete/<%= mem._id %>'">
+                                            <% } %>
+
+                                                <% if(user.permissions.find(per=>per=="Create Subscriptions")) { %>
+                                                    <input type="button" value="Add subscription"
+                                                        onclick="newSubs(`<%= mem._id %>`)">
+                                                    <% } %>
+                                                        <br>
+                        </strong>
+                        Email:<span class="smallertxt">
+                            <%= mem.email %>
+                        </span>
+                        <br>
+                        City: <span class="smallertxt">
+                            <%= mem.city %>
+                        </span>
+                        <br>
+
+                        <div id="subs" class="smallertxt">
+                            <% var count=0; %>
+                                <% data.subscriptions.forEach(sub=> { %>
+                                    <% if(sub.memberid.toString()==mem._id.toString()) { %>
+                                        <% count++ %>
+                                            <% if(count==1) { %>
+                                                <Strong>
+                                                    Movies watched:<br>
+                                                </Strong>
+
+                                                <% } %>
+                                                    <% data.movies.forEach(mov=>{ %>
+                                                        <% if(mov._id.toString()==sub.movieid.toString()) { %>
+                                                            <img src="<%= mov.image %>" style="width: 15%">
+                                                            <a href="/movies/<%= mov.name %>">
+                                                                <%= mov.name %>
+                                                            </a>, [<%= sub.date.slice(0,10) %>]<br>
+                                                                <% } %>
+                                                                    <% }) %>
+                                                                        <% } }) %>
+                        </div>
+                        <div id="<%= mem._id %>" style="display:none;width:100%">
+                            <strong><span class=smallertxt>Add new subscription:</span></strong><br>
+                            <form action="/subscriptions" method="POST" id="form-<%= mem._id %>">
+                            </form>
+                        </div>
+                    </div>
+
+                    <% }) %>
+                        
+        </div>
+        <% } %>
+
+    </div>
+    <script>
+async function newSubs(memberId) 
+{
+    var targetForm = document.getElementById(`form-${memberId}`);
+    var targetDiv = document.getElementById(`${memberId}`);
+
+    while (targetForm.lastChild) {
+        targetForm.removeChild(targetForm.lastChild);
+  }
+
+    if(targetDiv.style.display == 'none')
+    targetDiv.style.display = 'inline-block';
+    else targetDiv.style.display = `none`
+
+    let resp = await fetch('http://localhost:8000/api/subscriptions/getall');
+    if (resp.ok)
+    {
+        let data = await resp.json();
+        data.subscriptions.forEach(sub=>{
+            if(sub.memberid.toString() == memberId.toString())
+                data.movies.splice(data.movies.findIndex(x=>x._id == sub.movieid),1)
+        })
+        let select = document.createElement('select');
+        select.name = "movieid"
+        select.style.width = "100%"
+        targetForm.appendChild(select);
+        data.movies.forEach((mov)=>{
+                    let opt = document.createElement('option');
+                    opt.value =`${mov._id}`
+                    opt.innerText = `${mov.name}`
+                    select.appendChild(opt)
+            })
+        let date = document.createElement('input');
+        date.type = "date";
+        date.name = "date"
+        targetForm.appendChild(date);
+        let memId = document.createElement('input');
+        memId.type = "hidden";
+        memId.value=`${memberId}`;
+        memId.name = "memberid";
+        targetForm.appendChild(memId);
+        let submit = document.createElement('input');
+        submit.type = "submit";
+        submit.value="Subscribe"
+        targetForm.appendChild(submit);
+    }
+}
+</script>
+
+</body>
+
+</html>

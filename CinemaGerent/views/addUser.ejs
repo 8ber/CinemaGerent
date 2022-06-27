@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+
+</head>
+
+<body>
+    
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logo" onclick="window.location.href = '/login'">
+    <div class="menu">
+        <%= 'Hello ,' + user.firstname + ' ' + user.lastname + "." %>
+        <div id="menuLinks">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span>[<a href="/movies">Movies</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>[<a href="/subscriptions">Subscriptions</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <% if(user.id==="6293362c2deb85a53e109a2f" ) { %>
+                <span  style="background-color: #ada8a1" ;>[<a href="/users">Admin panel</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <% } %>
+                    <span>[<a href="/logout">Logout</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="mainBox" id="contentBox">
+        Options:
+        &#8618;<span><a href="/users">Display All users</a></span>&nbsp;&nbsp;&nbsp;&nbsp;&#8618;<span style="background-color: #ada8a1" ;><a href="/users/addUser">Add user</a></span>
+        <form action="/users/addUser" method="POST" id="form">
+            <label for="firstname">First Name:</label> 
+            <input type="text" name="firstname">
+    
+            <label for="lastname">Last Name:</label> 
+            <input type="text" name="lastname">
+    
+            <label for="username">Username:</label> 
+            <input type="text" name="username">
+
+            <label for="sessiontimeout">Session timeout (Minutes):</label> 
+            <input type="number" name="sessiontimeout" min="1" max="60" value="60">
+
+            <label>Created at: </label>
+            <input type="date" name="created_at" id="dateInpt" readonly>
+            <label>Permissions:</label>
+    <br>
+
+            <input type="checkbox" name="permissions" value="View Subscriptions" id="View Subscriptions" onclick="checkPerm('View Subscriptions')">
+            <label for="View Subscriptions">View Subscriptions</label>
+
+            <input type="checkbox" name="permissions" value="Create Subscriptions" id="Create Subscriptions" onclick="checkPerm('Create Subscriptions')">
+            <label for="Create Subscriptions">Create Subscriptions</label>
+
+            <input type="checkbox" name="permissions" value="Delete Subscriptions" id="Delete Subscriptions" onclick="checkPerm('Delete Subscriptions')">
+            <label for="Delete Subscriptions">Delete Subscriptions</label>
+
+            <input type="checkbox" name="permissions" value="Update Subscriptions"  id="Update Subscriptions" onclick="checkPerm('Update Subscriptions')">
+            <label for="Update Subscriptions">Update Subscriptions</label>
+
+            <input type="checkbox" name="permissions" value="View Movies"   id="View Movies" onclick="checkPerm('View Movies')">
+            <label for="View Movies">View Movies</label>
+
+            <input type="checkbox" name="permissions" value="Create Movies"   id="Create Movies" onclick="checkPerm('Create Movies')">
+            <label for="Create Movies">Create Movies</label>
+
+            <input type="checkbox" name="permissions" value="Delete Movies"  id="Delete Movies" onclick="checkPerm('Delete Movies')">
+            <label for="Delete Movies">Delete Movies</label>
+   
+            <input type="checkbox" name="permissions" value="Update Movies"  id="Update Movies" onclick="checkPerm('Update Movies')">
+            <label for="Update Movies">Update Movies</label>
+             
+            <input type="submit" value="Update" />
+            <input type="button" value="Cancel" onclick="javascript:history.back()"/>
+        </form>
+        <script>
+            document.getElementById("dateInpt").value = new Date().toISOString().slice(0, 10)
+            
+            function checkPerm(permToCheck) 
+         {
+             const subsPerm = ["Create Subscriptions","Delete Subscriptions","Update Subscriptions"]
+             var viewSubs = document.getElementById("View Subscriptions");
+             var viewMovies = document.getElementById("View Movies");
+             var check = document.getElementById(permToCheck).checked;
+             if (subsPerm.includes(permToCheck) && check)
+                 viewSubs.checked = true;
+             else if(check) 
+                 viewMovies.checked = true;
+         }
+     </script>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+
+</head>
+
+<body>
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logo" onclick="window.location.href = 'login'">
+    <div class="menu">
+        <%= 'Hello ,' + user.firstname + ' ' + user.lastname + "." %>
+        <div id="menuLinks">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span>[<a href="/movies">Movies</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>[<a href="/subscriptions">Subscriptions</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <% if(user.id==="6293362c2deb85a53e109a2f" ) { %>
+                <span  style="background-color: #ada8a1" ;>[<a href="/users">Admin panel</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <% } %>
+                    <span>[<a href="/logout">Logout</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="mainBox" id="contentBox">
+        <form action="/users/edit/<%= userToEdit.id %>" method="POST" id="form">
+            <label for="firstname">First Name:</label> 
+            <input type="text" name="firstname" value="<%= userToEdit.firstname %>">
+    
+            <label for="lastname">Last Name:</label> 
+            <input type="text" name="lastname" value="<%= userToEdit.lastname %>">
+    
+            <label for="username">Username:</label> 
+            <input type="text" name="username" value="<%= userToEdit.username %>">
+
+            <label for="sessiontimeout">Session timeout (Minutes):</label> 
+            <input type="number" name="sessiontimeout" value="<%= userToEdit.sessiontimeout %>"  min="1" max="60">
+
+            <label>Created at: </label>
+            <input type="date" name="created_at" value="<%= userToEdit.created_at %>" readonly>
+            
+            <label>Permissions:</label>
+    <br>
+<script>
+    function checkPerm(permToCheck) 
+    {
+        const subsPerm = ["Create Subscriptions","Delete Subscriptions","Update Subscriptions"]
+        var viewSubs = document.getElementById("View Subscriptions");
+        var viewMovies = document.getElementById("View Movies");
+        var check = document.getElementById(permToCheck).checked;
+        if (subsPerm.includes(permToCheck) && check)
+            viewSubs.checked = true;
+        else if(check) 
+            viewMovies.checked = true;
+    }
+</script>
+    <!-- 1. arr with all permissions - forEach loop
+         2. includes() to check specific user arr contains permission
+         3. if it includes -> render checkbox w "checked" attribute
+        else render it without.-->
+            <% allPermissions.forEach(permission=> { %>
+            <% if (userToEdit.permissions.includes(permission)) { %>
+            <input type="checkbox" name="permissions" value="<%= permission %>" checked id="<%= permission %>" onclick="checkPerm('<%= permission %>')">
+            <label for="<%= permission %>"><%= permission %></label>
+            <% } else { %>
+            <input type="checkbox" name="permissions" value="<%= permission %>" id="<%= permission %>" onclick="checkPerm('<%= permission %>')">
+            <label for="<%= permission %>"><%= permission %></label>
+            <% } } ) %>
+ 
+            <input type="hidden" name="id" value="<%= userToEdit.id %>" >
+            <input type="submit" value="Update" />
+            <input type="button" value="Cancel" onclick="javascript:history.back()"/>
+        </form>
+        
+    </div>
+</body>
+
+</html>

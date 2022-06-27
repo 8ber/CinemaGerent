@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+
+</head>
+
+<body>
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logo" onclick="window.location.href = '/login'">
+    <div class="menu">
+        <%= 'Hello ,' + user.firstname + ' ' + user.lastname + "." %>
+        <div id="menuLinks">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: #ada8a1" ;>[<a href="/movies">Movies</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>[<a href="/subscriptions">Subscriptions</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <% if(user.id==="6293362c2deb85a53e109a2f" ) { %>
+                <span>[<a href="/users">Admin panel</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <% } %>
+                    <span>[<a href="/logout">Logout</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="mainBox" id="contentBox" style="text-align: center;">
+        <% if(user.permissions.find(per=>per=="Update Movies")) { %>
+            <strong>Edit Movie - <%= movieToEdit.name %></strong>
+        <form action="/movies/edit/<%= movieToEdit._id %>" method="POST" id="form">
+            <label for="name">Name:</label> 
+            <input type="text" name="name" value="<%= movieToEdit.name %>">
+
+            <label for="genres">Genres:</label> 
+            <input type="text" name="genres" value="<%= movieToEdit.genres %>">
+
+            <label for="image">Image URL:</label> 
+            <input type="text" name="image" value="<%= movieToEdit.image %>" id="stam" onchange="editIMG()" onmouseleave="editIMG()">
+   
+            <label>Display IMG:</label>
+            <img id="imgToDisplay" src="" style="width: 80px">
+            <script>
+                function editIMG() {
+                let imgToEdit = document.getElementById("stam").value
+                document.getElementById("imgToDisplay").src = imgToEdit;
+                }
+            </script> 
+            <label for="premiered">Premiered:</label> 
+            <input type="date" name="premiered" value="<%= movieToEdit.premiered.slice(0,10) %>">
+            
+            <input type="hidden" name="_id" value="<%= movieToEdit._id %>" >
+            <input type="submit" value="Update" />
+            <input type="button" value="Cancel" onclick="javascript:history.back()"/>
+        </form>
+        <% } else { %>
+            Oops. You're <strong>not allowed</strong>
+             to edit this movie.<br>
+            Sorry!
+            <% } %>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+
+</head>
+
+<body>
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logo" onclick="window.location.href = 'login'">
+    <div class="menu">
+        <%= 'Hello ,' + user.firstname + ' ' + user.lastname + "." %>
+        <div id="menuLinks">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span>[<a href="/movies">Movies</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span  style="background-color: #ada8a1" ;>[<a href="/subscriptions">Subscriptions</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <% if(user.id==="6293362c2deb85a53e109a2f" ) { %>
+                <span>[<a href="/users">Admin panel</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <% } %>
+                    <span>[<a href="/logout">Logout</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div> 
+    <div class="mainBox" id="contentBox" style="text-align: center;">
+        <% if(user.permissions.find(per=>per=="Update Subscriptions")) { %>
+            <strong>Edit member - <%= subsToEdit.name %></strong>
+        <form action="/subscriptions/edit/<%= subsToEdit._id %>" method="POST" id="form">
+            <label for="name">Name:</label> 
+            <input type="text" name="name" value="<%= subsToEdit.name %>">
+
+            <label for="email">Email:</label> 
+            <input type="email" name="email" value="<%= subsToEdit.email %>">
+
+            <label for="city">City:</label> 
+            <input type="text" name="city" value="<%= subsToEdit.city %>" >
+        
+            <input type="hidden" name="_id" value="<%= subsToEdit._id %>" >
+            <input type="submit" value="Update" />
+            <input type="button" value="Cancel" onclick="javascript:history.back()"/>
+        </form>
+        <% } else { %>
+            Oops. You're <strong>not allowed</strong>
+             to edit this movie.<br>
+            Sorry!
+            <% } %>
+    </div>
+</body>
+
+</html>

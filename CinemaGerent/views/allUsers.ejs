@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGerent</title>
+    <link rel="stylesheet" href='http://localhost:3000/stylesheets/style.css'>
+</head>
+
+<body>
+    <img src='http://localhost:3000/images/CinemaGerent.svg' id="logo" onclick="window.location.href = '/login'">
+    <div class="menu">
+        <%= 'Hello ,' + user.firstname + ' ' + user.lastname + "." %>
+        <div id="menuLinks">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span>[<a href="/movies">Movies</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>[<a href="/subscriptions">Subscriptions</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <% if(user.id==="6293362c2deb85a53e109a2f" ) { %>
+                <span  style="background-color: #ada8a1" ;>[<a href="/users">Admin panel</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <% } %>
+                    <span>[<a href="/logout">Logout</a>]</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </div>
+    </div>
+    <div class="mainBox" id="contentBox">
+        Options:
+        &#8618;<span style="background-color: #ada8a1" ;><a href="/users">Display All users</a></span>&nbsp;&nbsp;&nbsp;&nbsp;&#8618;<span><a href="/users/addUser">Add user</a></span>
+
+        <div class="flexSmallBox">
+            <% allUsersData.forEach(user=> { %>
+                <div class="Box">
+                    <strong>Name</strong>: <%= user.firstname + " " + user.lastname %><br>
+                    <strong>Username</strong>: <%= user.username %><br>
+                    <strong>Session time out</strong>(Minutes): <%= user.sessiontimeout %><br>
+                    <strong>Created at</strong>: <%= user.created_at %><br>
+                    <strong>Permissions</strong>: <%= user.permissions %><br>
+                        <input type="button" value="Edit" onclick="window.location.href = '/users/edit/<%= user.id %>'">
+                        <input type="button" value="Delete" onclick="window.location.href = '/users/delete/<%= user.id %>'">
+                </div>
+                <br> 
+                <% }) %>
+        </div>
+
+
+    </div>
+
+    <!-- <div class="footer">
+        
+    </div> -->
+</body>
+
+</html>
